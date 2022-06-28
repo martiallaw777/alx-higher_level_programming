@@ -1,68 +1,96 @@
 #!/usr/bin/python3
+"""
+This module contains an algorithm that resolves the N-Queen puzzle
+using backtracking
+"""
 
-"""
-This is a module for N queens.
-"""
+
+def isSafe(m_queen, nqueen):
+    """ Method that determines if the queens can or can't kill each other
+    Args:
+        m_queen: array that has the queens positions
+        nqueen: queen number
+    Returns:
+        True: when queens can't kill each other
+        False: when some of the queens can kill
+    """
+
+    for i in range(nqueen):
+
+        if m_queen[i] == m_queen[nqueen]:
+            return False
+
+        if abs(m_queen[i] - m_queen[nqueen]) == abs(i - nqueen):
+            return False
+
+    return True
+
+
+def print_result(m_queen, nqueen):
+    """ Method that prints the list with the Queens positions
+    Args:
+        m_queen: array that has the queens positions
+        nqueen: queen number
+    """
+
+    res = []
+
+    for i in range(nqueen):
+        res.append([i, m_queen[i]])
+
+    print(res)
+
+
+def Queen(m_queen, nqueen):
+    """ Recursive function that executes the Backtracking algorithm
+    Args:
+        m_queen: array that has the queens positions
+        nqueen: queen number
+    """
+
+    if nqueen is len(m_queen):
+        print_result(m_queen, nqueen)
+        return
+
+    m_queen[nqueen] = -1
+
+    while((m_queen[nqueen] < len(m_queen) - 1)):
+
+        m_queen[nqueen] += 1
+
+        if isSafe(m_queen, nqueen) is True:
+
+            if nqueen is not len(m_queen):
+                Queen(m_queen, nqueen + 1)
+
+
+def solveNQueen(size):
+    """ Function that invokes the Backtracking algorithm
+    Args:
+        size: size of the chessboard
+    """
+
+    m_queen = [-1 for i in range(size)]
+
+    Queen(m_queen, 0)
+
 
 if __name__ == '__main__':
 
     import sys
 
-    if len(sys.argv) != 2:
+    if len(sys.argv) == 1 or len(sys.argv) > 2:
         print("Usage: nqueens N")
         sys.exit(1)
+
     try:
         size = int(sys.argv[1])
-    except BaseException:
+    except Exception as e:
         print("N must be a number")
         sys.exit(1)
+
     if size < 4:
         print("N must be at least 4")
         sys.exit(1)
 
-    def startSolve():
-        b = [[0 for j in range(size)] for i in range(size)]
-        checkRecursive(b, 0)
-        return
-
-    def checkRecursive(b, c):
-        if (c == size):
-            solution(b)
-            return True
-        ret = False
-        for i in range(size):
-            if (checkPosition(b, i, c)):
-                b[i][c] = 1
-                ret = checkRecursive(b, c + 1) or ret
-                b[i][c] = 0
-        return ret
-
-    def checkPosition(b, r, c):
-        for i in range(c):
-            if (b[r][i]):
-                return False
-        i = r
-        j = c
-        while i >= 0 and j >= 0:
-            if(b[i][j]):
-                return False
-            i = i - 1
-            j = j - 1
-        i = r
-        j = c
-        while j >= 0 and i < size:
-            if(b[i][j]):
-                return False
-            i = i + 1
-            j = j - 1
-        return True
-
-    def solution(b):
-        solve = []
-        for i in range(size):
-            for j in range(size):
-                if(b[i][j] is 1):
-                    solve.append([i, j])
-        print(solve)
-        solve.clear()
-    startSolve()
+    solveNQueen(size)
